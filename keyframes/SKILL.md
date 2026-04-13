@@ -17,12 +17,13 @@ If no arguments are provided, ask the user for the storyboard content and refere
 ### Step 2 — Load Context
 
 1. **Read all character reference images** from the refs directory using the Read tool.
-2. **Read QC rules** from `~/.claude/qc-rules.md`. If it doesn't exist, proceed without learned rules but warn the user.
-3. **Parse the storyboard** into individual shots. Each shot should have:
-   - Shot ID (e.g., SH01_A)
-   - Description/name (e.g., "wave", "aura", "approach")
+2. **Read QC rules** from `qc/qc-rules.md` (repo root). If it doesn't exist, proceed without learned rules but warn the user.
+3. **Parse the storyboard** using `pipeline/parse_storyboard.py` to extract the shot list. Each shot has:
+   - Frame ID (e.g., FRAME_01)
+   - Slug (e.g., "hook", "breathe-stylized")
    - The full prompt text for that shot
-4. **Create a versioned output subfolder** — check for existing version folders, increment to the next (e.g., `v01/`, `v02/`).
+4. **Load project preset** from `presets/{project}.md` based on the storyboard's `project` frontmatter field. This provides character descriptions, style prefix, position lock, and prompt suffixes.
+5. **Create a versioned output subfolder** — check for existing version folders, increment to the next (e.g., `v01/`, `v02/`).
 
 ### Step 3 — Build Prompts
 
@@ -88,7 +89,7 @@ After all images are generated, review each one:
 
 1. **Read each generated image** using the Read tool
 2. **Read the character reference images** for comparison
-3. **Run the 8 QC checks** from `~/.claude/agents/qc-reviewer.md`:
+3. **Run the 8 QC checks** from `qc/qc-reviewer.md`:
    - Character Identity
    - Outfit Accuracy
    - Props & Equipment
@@ -124,41 +125,9 @@ Report to the user:
 
 ## Project Presets
 
-### GLYTOONS (Default)
-<!-- To use a different project, replace this section with your own character descriptions and defaults -->
+Project presets live in `presets/` at the repo root. Each preset is a markdown file containing character descriptions, style prefix, position lock, and prompt suffixes.
 
-**Default refs directory**: Look for `Character References/` containing `Chibi_GLY_Reference.png` and `Dozer_Hero_Reference.png`
+The storyboard's `project` frontmatter field determines which preset to load:
+- `project: glytoons` → `presets/glytoons.md`
 
-**Default aspect ratio**: `9:16`
-**Default model**: `gemini-3.1-flash-image-preview`
-
-**Style prefix**:
-```
-2D flat animation style, clean vector line art, bold ink outlines, no photographic textures. 4K, high saturation, sharp focus. Cute chibi aesthetic — characters should look adorable with exaggerated chibi proportions.
-```
-
-**Character descriptions** (include in every prompt):
-
-**DOZER (brown bull):**
-```
-Cute chibi brown bull/bison with fluffy dark brown fur, small horns, round face, big dark eyes, pink snout. Wearing white t-shirt with exactly ONE "GLYTOONS" rainbow logo and densely scattered colorful cartoon character face sticker-prints, white shorts with same dense colorful character prints, WHITE sneakers with yellow lightning bolt accents on the sides. Stubby arms ending in dark brown hooves (NOT human hands). Visible tail from side/back views.
-```
-
-**GLY (robot):**
-```
-Extremely cute round chibi robot. Oversized spherical helmet head 1.5-2x the size of the tiny body. Iridescent blue-purple nebula visor faceplate. Tiny stubby limbs. Sleek white-silver innerspace suit with distinct blue-cyan light path LINES along armor panel seams. "GLY" sigil emblem on chest (rendered as sigil design, NOT plain text). Bronze-orange scarf/cape. Round headphone ear pieces on helmet sides. NOT on spaceboard unless the shot explicitly calls for it — default is standing on the ground.
-```
-
-**Position lock**: Dozer LEFT, GLY RIGHT (maintain across all shots unless storyboard specifies otherwise)
-
-**Mandatory prompt suffixes**:
-- "Do NOT include any text, watermarks, labels, or metadata overlays anywhere in the image."
-- "Both characters at the SAME scale — side by side on the same ground plane."
-
-### Adding a New Project Preset
-To add a new project, duplicate the GLYTOONS section above and replace:
-1. Character descriptions with your new characters
-2. Default refs directory
-3. Style prefix if different
-4. Position lock for your characters
-5. Any project-specific prompt constraints
+To add a new project, create a new preset file following the format in `presets/glytoons.md`.

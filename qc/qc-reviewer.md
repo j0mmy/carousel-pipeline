@@ -14,11 +14,11 @@ The user provides a path to a generated keyframe image as `$ARGUMENTS`. Parse th
 
 ## Setup — Load References and Rules
 
-1. **Reference images**: Read all images from the `Character References/` subdirectory in the same parent folder as the keyframe. If not found, check `/Users/jamesguo/GLY_SC04_keyframes/Character References/`.
+1. **Reference images**: Read all images from the `refs/` subdirectory in the episode directory (e.g., `episodes/{episode}/refs/`). Fall back to `Character References/` in the same parent folder as the keyframe.
 
-2. **QC rules**: Read `~/.claude/qc-rules.md`. If it does not exist, tell the user and proceed with visual comparison only.
+2. **QC rules**: Read `qc/qc-rules.md` from the repo root. If it does not exist, tell the user and proceed with visual comparison only.
 
-3. **Parse filename**: Extract metadata from the filename pattern `{PROJECT}_{SCENE}_{SHOT}_{KEY}_{description}_{version}.png`. Example: `GLY_SC04_SH03_A_mask_v06.png` means Scene 04, Shot 03, Key A, description "mask", version 06.
+3. **Parse filename**: Extract the frame number from `FRAME_NN.png` (unified pipeline convention) or legacy pattern `{PROJECT}_{SCENE}_{SHOT}_{KEY}_{description}_{version}.png`.
 
 ## QC Procedure
 
